@@ -1,0 +1,94 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "description": "Basic definition for all targets.",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+
+      }
+    },
+    {
+      "name": "MSVC",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "external"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64",
+      "hidden": true,
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "Debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "RelWithDebInfo",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "win-x64-debug",
+      "displayName": "Win x64 Debug",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment (Debug).",
+      "inherits": [ "base", "MSVC", "Debug", "x64" ],
+      "cacheVariables": {
+
+      }
+    },
+    {
+      "name": "win-x64-release",
+      "displayName": "Win x64 Release",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment (Release).",
+      "inherits": [ "base", "MSVC", "Release", "x64" ],
+      "cacheVariables": {
+
+      }
+    },
+    {
+      "name": "win-x64-relwithdebinfo",
+      "displayName": "Win x64 Release",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment (RelWithDebInfo).",
+      "inherits": [ "base", "MSVC", "RelWithDebInfo", "x64" ],
+      "cacheVariables": {
+
+      }
+    }
+  ]
+}
