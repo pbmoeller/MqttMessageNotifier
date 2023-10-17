@@ -30,6 +30,8 @@ target_link_libraries(MqttMessageNotifierApp
     PRIVATE
         Qt6::Core
         Qt6::Widgets
+        PahoMqttCpp::paho-mqttpp3
+        eclipse-paho-mqtt-c::paho-mqtt3as
 )
 
 set_target_properties(MqttMessageNotifierApp

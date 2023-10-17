@@ -23,6 +23,14 @@ find_package(Qt6
         Widgets
         Core
 )
+find_package(eclipse-paho-mqtt-c 
+    CONFIG
+    REQUIRED
+)
+find_package(PahoMqttCpp 
+    CONFIG
+    REQUIRED
+)
 
 # Add the project sources
 add_subdirectory(src)
