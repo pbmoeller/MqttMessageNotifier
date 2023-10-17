@@ -10,10 +10,15 @@ set(APP_HEADER
     "ui/mainwindow.hpp"
 )
 
+set(APP_RESOURCES
+    "${MqttMessageNotifier_SOURCE_DIR}/resources/resources.qrc"
+)
+
 add_executable(MqttMessageNotifierApp
     "main.cpp"
     ${APP_HEADER}
     ${APP_SOURCES}
+    ${APP_RESOURCES}
 )
 
 target_include_directories(MqttMessageNotifierApp

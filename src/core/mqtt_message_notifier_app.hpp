@@ -11,6 +11,8 @@ namespace mmn {
 
 class MqttMessageNotifierApp : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit MqttMessageNotifierApp(QObject *parent = nullptr);
     ~MqttMessageNotifierApp();

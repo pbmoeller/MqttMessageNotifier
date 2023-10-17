@@ -14,10 +14,12 @@ int main(int argc, char **argv)
 
     QCoreApplication::setApplicationName("MqttMessageNotifier");
 
-    QApplication qapp(argc, argv);
+    QApplication app(argc, argv);
 
-    mmn::MqttMessageNotifierApp app;
-    app.create();
+    //QApplication::setQuitOnLastWindowClosed(false);
 
-    return qapp.exec();
+    // Create application window and start
+    mmn::MqttMessageNotifierApp window;
+    window.create();
+    return app.exec();
 }

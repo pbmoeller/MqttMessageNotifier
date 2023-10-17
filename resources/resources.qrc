@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/32">
+        <file alias="MqttMessageNotifier32">icons/MqttMessageNotifier32.png</file>
+    </qresource>
+    <qresource prefix="/64">
+        <file alias="MqttMessageNotifier64">icons/MqttMessageNotifier64.png</file>
+    </qresource>
+    <qresource prefix="/16">
+        <file alias="MqttMessageNotifier16">icons/MqttMessageNotifier16.png</file>
+    </qresource>
+</RCC>
