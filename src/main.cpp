@@ -15,8 +15,7 @@ int main(int argc, char **argv)
     QCoreApplication::setApplicationName("MqttMessageNotifier");
 
     QApplication app(argc, argv);
-
-    //QApplication::setQuitOnLastWindowClosed(false);
+    QApplication::setQuitOnLastWindowClosed(false);
 
     // Create application window and start
     mmn::MqttMessageNotifierApp window;

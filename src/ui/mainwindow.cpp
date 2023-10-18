@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMenu>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
 
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     createActions();
+    createMenuBar();
     createTrayIcon();
 
     createContent();
@@ -62,6 +64,12 @@ void MainWindow::createActions()
 
     m_quitAction = new QAction(tr("&Quit"), this);
     connect(m_quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+}
+
+void MainWindow::createMenuBar()
+{
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(m_quitAction);
 }
 
 void MainWindow::createTrayIcon()

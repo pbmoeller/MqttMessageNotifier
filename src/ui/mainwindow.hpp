@@ -28,6 +28,7 @@ protected:
 
 private:
     void createActions();
+    void createMenuBar();
     void createTrayIcon();
     void createContent();
 
