@@ -2,12 +2,14 @@ set(APP_SOURCES
     "core/mqtt_message_notifier_app.cpp"
 
     "ui/mainwindow.cpp"
+    "ui/mqtt_tab_style.cpp"
 )
 
 set(APP_HEADER
     "core/mqtt_message_notifier_app.hpp"
 
     "ui/mainwindow.hpp"
+    "ui/mqtt_tab_style.hpp"
 )
 
 set(APP_RESOURCES

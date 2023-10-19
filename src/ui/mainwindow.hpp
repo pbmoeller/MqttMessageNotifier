@@ -9,6 +9,7 @@
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
+class QTabWidget;
 QT_END_NAMESPACE
 
 namespace mmn {
@@ -35,14 +36,20 @@ private:
 private slots:
     void showMessage();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    void addMqttConnection();
 
 private:
+    // Widgets
+    QTabWidget      *m_tabWidget;
 
     // Actions
     QAction         *m_quitAction;
     QAction         *m_minimizeAction;
     QAction         *m_maximizeAction;
     QAction         *m_restoreAction;
+
+    // Mqtt Actions
+    QAction         *m_addMqttConnection;
 
     // TrayIcon
     QSystemTrayIcon *m_trayIcon;
