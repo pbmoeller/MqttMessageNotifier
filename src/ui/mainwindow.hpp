@@ -14,6 +14,8 @@ QT_END_NAMESPACE
 
 namespace mmn {
 
+class MqttConnectionList;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -40,20 +42,23 @@ private slots:
 
 private:
     // Widgets
-    QTabWidget      *m_tabWidget;
+    QTabWidget          *m_tabWidget;
 
     // Actions
-    QAction         *m_quitAction;
-    QAction         *m_minimizeAction;
-    QAction         *m_maximizeAction;
-    QAction         *m_restoreAction;
+    QAction             *m_quitAction;
+    QAction             *m_minimizeAction;
+    QAction             *m_maximizeAction;
+    QAction             *m_restoreAction;
 
     // Mqtt Actions
-    QAction         *m_addMqttConnection;
+    QAction             *m_addMqttConnection;
 
     // TrayIcon
-    QSystemTrayIcon *m_trayIcon;
-    QMenu           *m_trayIconMenu;
+    QSystemTrayIcon     *m_trayIcon;
+    QMenu               *m_trayIconMenu;
+
+    // Data
+    MqttConnectionList  *m_mqttConnectionList;
 };
 
 } // namespace mmn

@@ -1,6 +1,7 @@
 #ifndef MMN_UI_MQTT_TAB_STYLE_HPP
 #define MMN_UI_MQTT_TAB_STYLE_HPP
 
+// Qt
 #include <QProxyStyle>
 
 namespace mmn {

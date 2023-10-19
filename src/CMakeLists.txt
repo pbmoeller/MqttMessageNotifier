@@ -1,15 +1,24 @@
 set(APP_SOURCES
     "core/mqtt_message_notifier_app.cpp"
 
+    "mqtt/mqtt_connection.cpp"
+    "mqtt/mqtt_connection_list.cpp"
+
     "ui/mainwindow.cpp"
     "ui/mqtt_tab_style.cpp"
+    "ui/mqtt_tab_widget.cpp"
 )
 
 set(APP_HEADER
     "core/mqtt_message_notifier_app.hpp"
+    
+    "mqtt/mqtt_connection.hpp"
+    "mqtt/mqtt_connection_list.hpp"
+    "mqtt/mqtt_connection_settings.hpp"
 
     "ui/mainwindow.hpp"
     "ui/mqtt_tab_style.hpp"
+    "ui/mqtt_tab_widget.hpp"
 )
 
 set(APP_RESOURCES

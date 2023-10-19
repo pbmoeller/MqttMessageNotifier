@@ -1,6 +1,8 @@
 // MqttMessageNotifier
 #include "mainwindow.hpp"
 #include "mqtt_tab_style.hpp"
+#include "mqtt_tab_widget.hpp"
+#include "mqtt/mqtt_connection_list.hpp"
 
 // Qt
 #include <QAction>
@@ -19,6 +21,8 @@ namespace mmn {
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    m_mqttConnectionList = new MqttConnectionList(this);
+
     createActions();
     createMenuBar();
     createTrayIcon();
@@ -122,7 +126,9 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::addMqttConnection()
 {
-    m_tabWidget->addTab(new QWidget, "First");
+    MqttConnection *newConnection = m_mqttConnectionList->addMqttConnection();
+
+    m_tabWidget->addTab(new MqttTabWidget(newConnection), "New Connection");
 }
 
 } // namespace mmn

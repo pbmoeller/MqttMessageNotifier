@@ -1,7 +1,7 @@
 #ifndef MMN_CORE_MQTT_MESSAGE_NOTIFIER_APP_HPP
 #define MMN_CORE_MQTT_MESSAGE_NOTIFIER_APP_HPP
 
-// ui
+// MqttMessageNotifier
 #include "ui/mainwindow.hpp"
 
 // Qt
