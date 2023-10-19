@@ -4,6 +4,14 @@
 // Qt
 #include <QObject>
 
+// STL
+#include <memory>
+
+namespace mqtt {
+class async_client;
+class message;
+} // namespace mqtt
+
 namespace mmn {
 
 struct MqttConnectionSettings;
@@ -20,11 +28,15 @@ public:
 public:
     void connect(const MqttConnectionSettings &settings);
     void disconnect();
-    void addSubscription();
+    void addSubscription(const std::string &topic, int qos);
     void removeSubscription();
+
+    void messageCallback(std::shared_ptr<const mqtt::message> message);
 
 private:
     std::string m_hostname;
+
+    std::unique_ptr<mqtt::async_client> m_mqttClient;
 };
 
 } // namespace mmn

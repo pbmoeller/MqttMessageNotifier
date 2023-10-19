@@ -22,7 +22,7 @@ MqttTabWidget::MqttTabWidget(MqttConnection *mqttConnection, QWidget *parent)
 
 MqttTabWidget::~MqttTabWidget()
 {
-
+    disconnect();
 }
 
 void MqttTabWidget::connect()
@@ -44,7 +44,7 @@ void MqttTabWidget::disconnect()
 
 void MqttTabWidget::subscribe()
 {
-
+    m_mqttConnection->addSubscription(m_subscriptionEdit->text().toStdString(), 1);
 }
 
 void MqttTabWidget::unsubscribe()
