@@ -245,7 +245,7 @@ int MqttTabWidget::topicMatchesSubscription(const char *sub, const char *topic, 
                 // Valid input, but no match
                 return Success;
             }
-        } else {
+        } else {    // Topic matches subscription in current character
             if(topic[1] == '\0') {
                 // Check for e.g. 'foo' matching 'foo/#'
                 if(sub[1] == '/' || sub[2] == '#' || sub[3] == '\0') {
