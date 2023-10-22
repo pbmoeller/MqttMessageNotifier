@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     createContent();
 
     m_trayIcon->show();
-    resize(400, 300);
+    resize(640, 480);
 }
 
 MainWindow::~MainWindow()
@@ -119,7 +119,21 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::addMqttConnection()
 {
-    m_tabWidget->addTab(new MqttTabWidget, "New Connection");
+    int idx = m_tabWidget->addTab(new MqttTabWidget, "New Connection");
+    MqttTabWidget* widget = static_cast<MqttTabWidget*>(m_tabWidget->widget(idx));
+    connect(widget, &MqttTabWidget::connectionChanged, this, &MainWindow::connectionChanged);
+}
+
+void MainWindow::connectionChanged(const QString &newName)
+{
+    MqttTabWidget* tabWidget = qobject_cast<MqttTabWidget*>(sender());
+    if(tabWidget != nullptr)
+    {
+        int idx = m_tabWidget->indexOf(tabWidget);
+        if(idx >= 0) {
+            m_tabWidget->tabBar()->setTabText(idx, newName);
+        }
+    }
 }
 
 } // namespace mmn

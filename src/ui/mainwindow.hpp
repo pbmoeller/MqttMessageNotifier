@@ -38,6 +38,9 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void addMqttConnection();
 
+public slots:
+    void connectionChanged(const QString &newName);
+
 private:
     // Widgets
     QTabWidget          *m_tabWidget;

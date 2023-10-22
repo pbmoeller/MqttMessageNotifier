@@ -8,7 +8,10 @@
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QPushButton;
-class QListWidget;
+class QTreeWidget;
+class QCheckBox;
+class QLabel;
+class QGridLayout;
 QT_END_NAMESPACE
 
 namespace mmn {
@@ -28,6 +31,10 @@ public slots:
     void disconnect();
     void subscribe();
     void unsubscribe();
+    void onMqttConnectionStatusChange(bool isConnected);
+
+signals:
+    void connectionChanged(const QString &newName);
 
 private:
     void createContent();
@@ -38,6 +45,11 @@ private:
     // Ui Left
     QPushButton *m_connectButton;
     QPushButton *m_disconnectButton;
+    QLabel      *m_hostnameLabel;
+    QLabel      *m_portLabel;
+    QLabel      *m_usernameLabel;
+    QLabel      *m_passwordLabel;
+    QLabel      *m_clientIdLabel;
     QLineEdit   *m_hostnameEdit;
     QLineEdit   *m_portEdit;
     QLineEdit   *m_usernameEdit;
@@ -45,9 +57,13 @@ private:
     QLineEdit   *m_clientIdEdit;
 
     // Ui Right
-    QPushButton *m_subscribeButton;
+    QGridLayout *m_rightLayout;
+    QLabel      *m_subscriptionLabel;
     QLineEdit   *m_subscriptionEdit;
-    QListWidget *m_subscriptionList;
+    QLabel      *m_notificationLabel;
+    QCheckBox   *m_notifyCheck;
+    QPushButton *m_subscribeButton;
+    QTreeWidget *m_subscriptionList;
 };
 
 } // namespace mmn
