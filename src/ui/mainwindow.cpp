@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_trayIcon->show();
     resize(640, 480);
+    setWindowTitle("MqttMessageNotifier");
 }
 
 MainWindow::~MainWindow()
@@ -107,9 +108,9 @@ void MainWindow::createContent()
     setCentralWidget(m_tabWidget);
 }
 
-void MainWindow::showMessage()
+void MainWindow::showMessage(const QString &title, const QString &body)
 {
-
+    m_trayIcon->showMessage(title, body, QIcon(":/64/MqttMessageNotifier64"));
 }
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -122,6 +123,7 @@ void MainWindow::addMqttConnection()
     int idx = m_tabWidget->addTab(new MqttTabWidget, "New Connection");
     MqttTabWidget* widget = static_cast<MqttTabWidget*>(m_tabWidget->widget(idx));
     connect(widget, &MqttTabWidget::connectionChanged, this, &MainWindow::connectionChanged);
+    connect(widget, &MqttTabWidget::notify, this, &MainWindow::showMessage);
 }
 
 void MainWindow::connectionChanged(const QString &newName)

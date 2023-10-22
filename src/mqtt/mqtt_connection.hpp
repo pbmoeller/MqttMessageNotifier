@@ -45,6 +45,7 @@ public:
 
 signals:
     void connectionStatusChanged(bool isConnected);
+    void messageArrived(const std::string &topic, const std::string &message);
 
 private:
     std::string m_serverUri;

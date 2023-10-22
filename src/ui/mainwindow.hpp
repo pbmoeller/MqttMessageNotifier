@@ -34,12 +34,12 @@ private:
     void createContent();
 
 private slots:
-    void showMessage();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void addMqttConnection();
 
 public slots:
     void connectionChanged(const QString &newName);
+    void showMessage(const QString &title, const QString &body);
 
 private:
     // Widgets

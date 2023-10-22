@@ -95,7 +95,7 @@ void MqttConnection::disconnectedCallback(const mqtt::properties&, mqtt::ReasonC
 
 void MqttConnection::messageCallback(std::shared_ptr<const mqtt::message> message)
 {
-    qDebug() << message->get_payload().c_str();
+    emit messageArrived(message->get_topic(), message->get_payload());
 }
 
 } // namespace mmn

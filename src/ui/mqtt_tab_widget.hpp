@@ -32,9 +32,11 @@ public slots:
     void subscribe();
     void unsubscribe();
     void onMqttConnectionStatusChange(bool isConnected);
+    void onMessage(const std::string &topic, const std::string &message);
 
 signals:
     void connectionChanged(const QString &newName);
+    void notify(const QString &topic, const QString &message);
 
 private:
     void createContent();

@@ -21,6 +21,8 @@ MqttTabWidget::MqttTabWidget(QWidget *parent)
     m_mqttConnection = new MqttConnection(this);
     QObject::connect(m_mqttConnection, &MqttConnection::connectionStatusChanged,
                      this, &MqttTabWidget::onMqttConnectionStatusChange);
+    QObject::connect(m_mqttConnection, &MqttConnection::messageArrived,
+                     this, &MqttTabWidget::onMessage);
 
     createContent();
     onMqttConnectionStatusChange(false);
@@ -88,6 +90,11 @@ void MqttTabWidget::onMqttConnectionStatusChange(bool isConnected)
 
     // Notify listener with new broker name
     emit connectionChanged(QString(m_mqttConnection->getServerUri().c_str()));
+}
+
+void MqttTabWidget::onMessage(const std::string &topic, const std::string &message)
+{
+    emit notify(QString(topic.c_str()), QString(message.c_str()));
 }
 
 void MqttTabWidget::createContent()
