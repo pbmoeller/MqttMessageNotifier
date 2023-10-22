@@ -4,6 +4,7 @@
 
 // Paho MQTT
 #include <mqtt/async_client.h>
+#include <mqtt/properties.h>
 
 // Qt
 #include <QDebug>
@@ -21,6 +22,11 @@ MqttConnection::~MqttConnection()
     m_mqttClient->disconnect();
 }
 
+std::string MqttConnection::getServerUri() const
+{
+    return m_serverUri;
+}
+
 void MqttConnection::connect(const MqttConnectionSettings &settings)
 {
     qDebug() << "Received connection request.";
@@ -30,8 +36,8 @@ void MqttConnection::connect(const MqttConnectionSettings &settings)
     qDebug() << settings.password.c_str();
     qDebug() << settings.clientId.c_str();
 
-    std::string serverUri = settings.hostname + ":" + std::to_string(settings.port);
-    m_mqttClient = std::make_unique<mqtt::async_client>(serverUri, settings.clientId);
+    m_serverUri = settings.hostname + ":" + std::to_string(settings.port);
+    m_mqttClient = std::make_unique<mqtt::async_client>(m_serverUri, settings.clientId);
 
     mqtt::connect_options opts = mqtt::connect_options_builder()
         .user_name(settings.username)
@@ -42,6 +48,16 @@ void MqttConnection::connect(const MqttConnectionSettings &settings)
     m_mqttClient->set_message_callback(std::bind(&MqttConnection::messageCallback,
                                                  this,
                                                  std::placeholders::_1));
+    m_mqttClient->set_connected_handler(std::bind(&MqttConnection::connectedCallback,
+                                                  this,
+                                                  std::placeholders::_1));
+    m_mqttClient->set_connection_lost_handler(std::bind(&MqttConnection::connectionLostCallback,
+                                                  this,
+                                                  std::placeholders::_1));
+    m_mqttClient->set_disconnected_handler(std::bind(&MqttConnection::disconnectedCallback,
+                                                     this,
+                                                     std::placeholders::_1,
+                                                     std::placeholders::_2));
 
     m_mqttClient->connect(opts);
 }
@@ -49,6 +65,7 @@ void MqttConnection::connect(const MqttConnectionSettings &settings)
 void MqttConnection::disconnect()
 {
     m_mqttClient->disconnect();
+    emit connectionStatusChanged(false);
 }
 
 void MqttConnection::addSubscription(const std::string &topic, int qos)
@@ -59,6 +76,21 @@ void MqttConnection::addSubscription(const std::string &topic, int qos)
 void MqttConnection::removeSubscription(const std::string &topic)
 {
     m_mqttClient->unsubscribe(topic);
+}
+
+void MqttConnection::connectedCallback(const std::string& cause)
+{
+    emit connectionStatusChanged(true);
+}
+
+void MqttConnection::connectionLostCallback(const std::string& cause)
+{
+    emit connectionStatusChanged(false);
+}
+
+void MqttConnection::disconnectedCallback(const mqtt::properties&, mqtt::ReasonCode)
+{
+    emit connectionStatusChanged(false);
 }
 
 void MqttConnection::messageCallback(std::shared_ptr<const mqtt::message> message)
