@@ -29,7 +29,7 @@ public:
     void connect(const MqttConnectionSettings &settings);
     void disconnect();
     void addSubscription(const std::string &topic, int qos);
-    void removeSubscription();
+    void removeSubscription(const std::string &topic);
 
     void messageCallback(std::shared_ptr<const mqtt::message> message);
 

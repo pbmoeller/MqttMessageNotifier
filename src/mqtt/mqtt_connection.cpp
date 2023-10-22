@@ -18,7 +18,7 @@ MqttConnection::MqttConnection(QObject *parent)
 
 MqttConnection::~MqttConnection()
 {
-
+    m_mqttClient->disconnect();
 }
 
 void MqttConnection::connect(const MqttConnectionSettings &settings)
@@ -56,9 +56,9 @@ void MqttConnection::addSubscription(const std::string &topic, int qos)
     m_mqttClient->subscribe(topic, qos);
 }
 
-void MqttConnection::removeSubscription()
+void MqttConnection::removeSubscription(const std::string &topic)
 {
-
+    m_mqttClient->unsubscribe(topic);
 }
 
 void MqttConnection::messageCallback(std::shared_ptr<const mqtt::message> message)
