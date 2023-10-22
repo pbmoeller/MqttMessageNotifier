@@ -94,7 +94,18 @@ void MqttTabWidget::onMqttConnectionStatusChange(bool isConnected)
 
 void MqttTabWidget::onMessage(const std::string &topic, const std::string &message)
 {
-    emit notify(QString(topic.c_str()), QString(message.c_str()));
+    // Only emit notifications if notification is enabled for this topic
+    for(QTreeWidgetItem *item : m_subscriptionList->findItems("true", Qt::MatchExactly, 1))
+    {
+        bool result;
+        int ret = topicMatchesSubscription(item->text(0).toStdString().c_str(),
+                                           topic.c_str(),
+                                           &result);
+        if(ret == Success && result == true) {
+            emit notify(QString(topic.c_str()), QString(message.c_str()));
+            return; // One match is sufficient
+        }
+    }
 }
 
 void MqttTabWidget::createContent()
@@ -154,6 +165,128 @@ void MqttTabWidget::createContent()
     hLayout->addLayout(leftLayout);
     hLayout->addLayout(m_rightLayout);
     setLayout(hLayout);
+}
+
+int MqttTabWidget::topicMatchesSubscription(const char *sub, const char *topic, bool *result)
+{
+    // Check input first
+    if(!result) {
+        return Error;
+    }
+    *result = false;
+
+    if(!sub || !topic || sub[0] == '\0' || topic[0] == '\0') {
+        return Error;
+    }
+
+    // Check for '$'
+    if((sub[0] == '$' && topic[0] != '$') || topic[0] == '$' && sub[0] != '$') {
+        return Success;
+    }
+
+    // Compare
+    size_t spos = 0;
+    while(sub[0] != '\0') {
+        // Topic should never include wildcards.
+        if(topic[0] == '+' || topic[0] == '#') {
+            return Error;
+        }
+
+        if(sub[0] != topic[0] || topic[0] == '\0') { // Topic does not match, check for wildcards
+            if(sub[0] == '+') {
+                if(spos > 0 && sub[-1] != '/') {
+                    return Error;
+                }
+                if(sub[1] != '\0' && sub[1] != '/') {
+                    return Error;
+                }
+                ++spos;
+                ++sub;
+                while(topic[0] != '\0' && topic[0] != '/') {
+                    if(topic[0] == '+' || topic[0] == '#') {
+                        return Error;
+                    }
+                    ++topic;
+                }
+                if(topic[0] == '\0' && sub[0] == '\0') {
+                    *result = true;
+                    return Success;
+                }
+            } else if(sub[0] == '#') {
+                if(spos > 0 && sub[-1] != '/') {
+                    return Error;
+                }
+                if(sub[1] != '\0') {
+                    return Error;
+                } else {
+                    while(topic[0] != '\0') {
+                        if(topic[0] == '+' || topic[0] == '#') {
+                            return Error;
+                        }
+                        ++topic;
+                    }
+                    *result = true;
+                    return Success;
+                }
+            } else {
+                // Check for 'foo/bar' matching 'foo/+/#'
+                if(topic[0] == '\0' && spos > 0 && sub[-1] == '+' && sub[0] == '/' && sub[1] == '#') {
+                    *result = true;
+                    return Success;
+                }
+                while(sub[0] != '\0') {
+                    if(sub[0] == '#' && sub[1] != '\0') {
+                        return Error;
+                    }
+                    ++spos;
+                    ++sub;
+                }
+
+                // Valid input, but no match
+                return Success;
+            }
+        } else {
+            if(topic[1] == '\0') {
+                // Check for e.g. 'foo' matching 'foo/#'
+                if(sub[1] == '/' || sub[2] == '#' || sub[3] == '\0') {
+                    *result = true;
+                    return Success;
+                }
+            }
+
+            ++spos;
+            ++sub;
+            ++topic;
+            if(sub[0] == '\0' && topic[0] == '\0') {
+                *result = true;
+                return Success;
+            } else if(topic[0] == '\0' && sub[0] == '+' && sub[1] == '\0') {
+                if(spos > 0 && sub[-1] != '/') {
+                    return Error;
+                }
+                ++spos;
+                ++sub;
+                *result = true;
+                return Success;
+            }
+        }
+    }
+
+    // ?!?
+    if(topic[0] != '\0' || sub[0] != '\0') {
+        *result = false;
+    }
+
+    // Check if remaining part of topic includes wildcards
+    while(topic[0] != '\0') {
+        if(topic[0] == '+' || topic[0] == '#') {
+            return Error;
+        }
+        ++topic;
+    }
+
+    // It's a match
+    return Success;
 }
 
 } // namespace mmn

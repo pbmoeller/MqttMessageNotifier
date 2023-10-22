@@ -22,6 +22,12 @@ class MqttTabWidget : public QWidget
 {
     Q_OBJECT
 
+    enum TopicMatch
+    {
+        Success = 0,
+        Error   = 1,
+    };
+
 public:
     explicit MqttTabWidget(QWidget *parent = nullptr);
     virtual ~MqttTabWidget();
@@ -40,6 +46,7 @@ signals:
 
 private:
     void createContent();
+    int topicMatchesSubscription(const char *sub, const char *topic, bool *result);
 
 private:
     MqttConnection *m_mqttConnection;
