@@ -13,9 +13,9 @@
 
 namespace mmn {
 
-MqttTabWidget::MqttTabWidget(MqttConnection *mqttConnection, QWidget *parent)
+MqttTabWidget::MqttTabWidget(QWidget *parent)
     : QWidget(parent)
-    , m_mqttConnection(mqttConnection)
+    , m_mqttConnection(new MqttConnection(this))
 {
     createContent();
 }

@@ -14,8 +14,6 @@ QT_END_NAMESPACE
 
 namespace mmn {
 
-class MqttConnectionList;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -56,9 +54,6 @@ private:
     // TrayIcon
     QSystemTrayIcon     *m_trayIcon;
     QMenu               *m_trayIconMenu;
-
-    // Data
-    MqttConnectionList  *m_mqttConnectionList;
 };
 
 } // namespace mmn

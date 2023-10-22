@@ -8,8 +8,8 @@ namespace mmn {
 
 struct MqttConnectionSettings
 {
+    int port{0};
     std::string hostname;
-    int port;
     std::string username;
     std::string password;
     std::string clientId;

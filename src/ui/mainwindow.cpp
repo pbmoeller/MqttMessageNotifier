@@ -2,7 +2,6 @@
 #include "mainwindow.hpp"
 #include "mqtt_tab_style.hpp"
 #include "mqtt_tab_widget.hpp"
-#include "mqtt/mqtt_connection_list.hpp"
 
 // Qt
 #include <QAction>
@@ -21,8 +20,6 @@ namespace mmn {
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    m_mqttConnectionList = new MqttConnectionList(this);
-
     createActions();
     createMenuBar();
     createTrayIcon();
@@ -108,10 +105,6 @@ void MainWindow::createContent()
     m_tabWidget->tabBar()->setStyle(new MqttTabStyle);
 
     setCentralWidget(m_tabWidget);
-
-    //QVBoxLayout *mainLayout = new QVBoxLayout;
-    //mainLayout->addWidget(new QWidget);
-    //setLayout(mainLayout);
 }
 
 void MainWindow::showMessage()
@@ -126,9 +119,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::addMqttConnection()
 {
-    MqttConnection *newConnection = m_mqttConnectionList->addMqttConnection();
-
-    m_tabWidget->addTab(new MqttTabWidget(newConnection), "New Connection");
+    m_tabWidget->addTab(new MqttTabWidget, "New Connection");
 }
 
 } // namespace mmn

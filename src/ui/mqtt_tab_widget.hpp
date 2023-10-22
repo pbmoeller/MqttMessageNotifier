@@ -20,7 +20,7 @@ class MqttTabWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit MqttTabWidget(MqttConnection *mqttConnection, QWidget *parent = nullptr);
+    explicit MqttTabWidget(QWidget *parent = nullptr);
     virtual ~MqttTabWidget();
 
 public slots:
