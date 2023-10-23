@@ -11,6 +11,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTreeWidget>
+#include <QRadioButton>
+#include <QButtonGroup>
 #include <QTreeWidgetItem>
 
 namespace mmn {
@@ -36,11 +38,12 @@ MqttTabWidget::~MqttTabWidget()
 void MqttTabWidget::connect()
 {
     MqttConnectionSettings settings;
-    settings.hostname = m_hostnameEdit->text().toStdString();
-    settings.username = m_usernameEdit->text().toStdString();
-    settings.password = m_passwordEdit->text().toStdString();
-    settings.clientId = m_clientIdEdit->text().toStdString();
-    settings.port     = m_portEdit->text().toInt();
+    settings.hostname   = m_hostnameEdit->text().toStdString();
+    settings.username   = m_usernameEdit->text().toStdString();
+    settings.password   = m_passwordEdit->text().toStdString();
+    settings.clientId   = m_clientIdEdit->text().toStdString();
+    settings.port       = m_portEdit->text().toInt();
+    settings.sslSetting = static_cast<SslSetting>(m_sslGroup->checkedId());
 
     m_mqttConnection->connect(settings);
 }
@@ -125,6 +128,15 @@ void MqttTabWidget::createContent()
     QObject::connect(m_connectButton, &QPushButton::clicked, this, &MqttTabWidget::connect);
     m_disconnectButton  = new QPushButton(tr("Disconnect"));
     QObject::connect(m_disconnectButton, &QPushButton::clicked, this, &MqttTabWidget::disconnect);
+    m_sslNoRadio        = new QRadioButton(tr("No SSL"));
+    m_sslEasyRadio      = new QRadioButton(tr("Simple SSL"));
+    m_sslExtendedRadio  = new QRadioButton(tr("Extended SSL settings (currently not supported)"));
+    m_sslExtendedRadio->setEnabled(false);
+    m_sslGroup          = new QButtonGroup();
+    m_sslGroup->setExclusive(true);
+    m_sslGroup->addButton(m_sslNoRadio, SslSetting::NoSsl);
+    m_sslGroup->addButton(m_sslEasyRadio, SslSetting::EasySsl);
+    m_sslGroup->addButton(m_sslExtendedRadio, SslSetting::ExtendedSsl);
 
     QGridLayout *leftLayout = new QGridLayout;
     leftLayout->addWidget(m_hostnameLabel, 0, 0);
@@ -137,9 +149,12 @@ void MqttTabWidget::createContent()
     leftLayout->addWidget(m_passwordEdit, 3, 1);
     leftLayout->addWidget(m_clientIdLabel, 4, 0);
     leftLayout->addWidget(m_clientIdEdit, 4, 1);
-    leftLayout->addWidget(m_connectButton, 5, 1);
-    leftLayout->addWidget(m_disconnectButton, 6, 1);
-    leftLayout->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding), 7, 2, 1 ,2);
+    leftLayout->addWidget(m_sslNoRadio, 5, 0, 1, 2);
+    leftLayout->addWidget(m_sslEasyRadio, 6, 0, 1, 2);
+    leftLayout->addWidget(m_sslExtendedRadio, 7, 0, 1, 2);
+    leftLayout->addWidget(m_connectButton, 8, 1);
+    leftLayout->addWidget(m_disconnectButton, 9, 1);
+    leftLayout->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding), 10, 2, 1 ,2);
 
     // Right Layout
     m_subscriptionEdit  = new QLineEdit;

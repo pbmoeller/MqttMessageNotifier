@@ -12,6 +12,8 @@ class QTreeWidget;
 class QCheckBox;
 class QLabel;
 class QGridLayout;
+class QRadioButton;
+class QButtonGroup;
 QT_END_NAMESPACE
 
 namespace mmn {
@@ -52,27 +54,31 @@ private:
     MqttConnection *m_mqttConnection;
 
     // Ui Left
-    QPushButton *m_connectButton;
-    QPushButton *m_disconnectButton;
-    QLabel      *m_hostnameLabel;
-    QLabel      *m_portLabel;
-    QLabel      *m_usernameLabel;
-    QLabel      *m_passwordLabel;
-    QLabel      *m_clientIdLabel;
-    QLineEdit   *m_hostnameEdit;
-    QLineEdit   *m_portEdit;
-    QLineEdit   *m_usernameEdit;
-    QLineEdit   *m_passwordEdit;
-    QLineEdit   *m_clientIdEdit;
+    QPushButton     *m_connectButton;
+    QPushButton     *m_disconnectButton;
+    QLabel          *m_hostnameLabel;
+    QLabel          *m_portLabel;
+    QLabel          *m_usernameLabel;
+    QLabel          *m_passwordLabel;
+    QLabel          *m_clientIdLabel;
+    QLineEdit       *m_hostnameEdit;
+    QLineEdit       *m_portEdit;
+    QLineEdit       *m_usernameEdit;
+    QLineEdit       *m_passwordEdit;
+    QLineEdit       *m_clientIdEdit;
+    QRadioButton    *m_sslNoRadio;
+    QRadioButton    *m_sslEasyRadio;
+    QRadioButton    *m_sslExtendedRadio;
+    QButtonGroup    *m_sslGroup;
 
     // Ui Right
-    QGridLayout *m_rightLayout;
-    QLabel      *m_subscriptionLabel;
-    QLineEdit   *m_subscriptionEdit;
-    QLabel      *m_notificationLabel;
-    QCheckBox   *m_notifyCheck;
-    QPushButton *m_subscribeButton;
-    QTreeWidget *m_subscriptionList;
+    QGridLayout     *m_rightLayout;
+    QLabel          *m_subscriptionLabel;
+    QLineEdit       *m_subscriptionEdit;
+    QLabel          *m_notificationLabel;
+    QCheckBox       *m_notifyCheck;
+    QPushButton     *m_subscribeButton;
+    QTreeWidget     *m_subscriptionList;
 };
 
 } // namespace mmn

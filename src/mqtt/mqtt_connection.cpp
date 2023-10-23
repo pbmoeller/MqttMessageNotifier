@@ -29,22 +29,46 @@ std::string MqttConnection::getServerUri() const
 
 void MqttConnection::connect(const MqttConnectionSettings &settings)
 {
-    qDebug() << "Received connection request.";
-
-    qDebug() << settings.hostname.c_str();
-    qDebug() << settings.username.c_str();
-    qDebug() << settings.password.c_str();
-    qDebug() << settings.clientId.c_str();
-
+    // Create URI
     m_serverUri = settings.hostname + ":" + std::to_string(settings.port);
-    m_mqttClient = std::make_unique<mqtt::async_client>(m_serverUri, settings.clientId);
 
+    // Set basic connection options
     mqtt::connect_options opts = mqtt::connect_options_builder()
         .user_name(settings.username)
         .password(settings.password)
         .clean_session(true)
         .finalize();
 
+    // Set SSL options
+    switch(settings.sslSetting)
+    {
+        case SslSetting::ExtendedSsl:
+        {
+            qDebug() << "Extended SSL is not supported at the moment.";
+            [[fallthrough]];
+        }
+        case SslSetting::EasySsl:
+        {
+            m_serverUri = std::string("ssl://").append(m_serverUri);
+            mqtt::ssl_options sslOptions = mqtt::ssl_options_builder()
+                .verify(false)
+                .enable_server_cert_auth(false)
+                .error_handler([](const std::string &msg) {
+                                    qDebug() << "MQTT SSL Error " << msg.c_str();
+                               })
+                .finalize();
+            opts.set_ssl(std::move(sslOptions));
+            break;
+        }
+        case SslSetting::NoSsl:
+        default:
+            break;
+    }
+
+    // Create client object
+    m_mqttClient = std::make_unique<mqtt::async_client>(m_serverUri, settings.clientId);
+
+    // Set all callbacks
     m_mqttClient->set_message_callback(std::bind(&MqttConnection::messageCallback,
                                                  this,
                                                  std::placeholders::_1));
@@ -59,6 +83,7 @@ void MqttConnection::connect(const MqttConnectionSettings &settings)
                                                      std::placeholders::_1,
                                                      std::placeholders::_2));
 
+    // Connect to broker
     m_mqttClient->connect(opts);
 }
 
