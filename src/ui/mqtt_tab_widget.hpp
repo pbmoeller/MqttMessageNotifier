@@ -1,6 +1,9 @@
 #ifndef MMN_UI_MQTT_TAB_WIDGET_HPP
 #define MMN_UI_MQTT_TAB_WIDGET_HPP
 
+// MqttMessageNotifier
+#include "mqtt/mqtt_connection_settings.hpp"
+
 // Qt
 #include <QWidget>
 
@@ -33,6 +36,9 @@ class MqttTabWidget : public QWidget
 public:
     explicit MqttTabWidget(QWidget *parent = nullptr);
     virtual ~MqttTabWidget();
+
+    MqttConnectionSettings getMqttConnectionSettings() const;
+    void setMqttConnectionSettings(const MqttConnectionSettings &settings);
 
 public slots:
     void connect();

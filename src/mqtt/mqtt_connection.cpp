@@ -19,12 +19,23 @@ MqttConnection::MqttConnection(QObject *parent)
 
 MqttConnection::~MqttConnection()
 {
-    m_mqttClient->disconnect();
+    if(m_mqttClient != nullptr) {
+        m_mqttClient->disconnect();
+    }
 }
 
 std::string MqttConnection::getServerUri() const
 {
     return m_serverUri;
+}
+
+bool MqttConnection::isConnected() const
+{
+    if(m_mqttClient == nullptr) {
+        return false;
+    }
+
+    return m_mqttClient->is_connected();
 }
 
 void MqttConnection::connect(const MqttConnectionSettings &settings)

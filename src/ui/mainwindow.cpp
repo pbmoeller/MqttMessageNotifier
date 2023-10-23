@@ -14,12 +14,16 @@
 #include <QTabBar>
 #include <QTabWidget>
 #include <QVBoxLayout>
+#include <QStandardPaths>
+#include <QSettings>
 
 namespace mmn {
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    appSavePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
     createActions();
     createMenuBar();
     createTrayIcon();
@@ -28,7 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_trayIcon->show();
     resize(640, 480);
+
     setWindowTitle("MqttMessageNotifier");
+    restoreSettings();
 }
 
 MainWindow::~MainWindow()
@@ -71,6 +77,9 @@ void MainWindow::createActions()
     m_quitAction = new QAction(tr("&Quit"), this);
     connect(m_quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
+    m_saveAction = new QAction(tr("&Save"), this);
+    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveSettings);
+
     // Mqtt Actions
     m_addMqttConnection = new QAction(tr("Add Connection"));
     connect(m_addMqttConnection, &QAction::triggered, this, &MainWindow::addMqttConnection);
@@ -79,6 +88,7 @@ void MainWindow::createActions()
 void MainWindow::createMenuBar()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(m_saveAction);
     fileMenu->addAction(m_quitAction);
 
     QMenu *mqttMenu = menuBar()->addMenu(tr("&Mqtt"));
@@ -118,12 +128,14 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 }
 
-void MainWindow::addMqttConnection()
+MqttTabWidget* MainWindow::addMqttConnection()
 {
     int idx = m_tabWidget->addTab(new MqttTabWidget, "New Connection");
     MqttTabWidget* widget = static_cast<MqttTabWidget*>(m_tabWidget->widget(idx));
     connect(widget, &MqttTabWidget::connectionChanged, this, &MainWindow::connectionChanged);
     connect(widget, &MqttTabWidget::notify, this, &MainWindow::showMessage);
+
+    return widget;
 }
 
 void MainWindow::connectionChanged(const QString &newName)
@@ -136,6 +148,69 @@ void MainWindow::connectionChanged(const QString &newName)
             m_tabWidget->tabBar()->setTabText(idx, newName);
         }
     }
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings appSettings(QString("%1/%2.ini").arg(appSavePath, QCoreApplication::applicationName()),
+                          QSettings::IniFormat);
+
+    appSettings.beginGroup("mqtt");
+    appSettings.beginWriteArray("connections");
+    for(int idx = 0; idx < m_tabWidget->count(); ++idx) {
+        MqttTabWidget* widget = static_cast<MqttTabWidget*>(m_tabWidget->widget(idx));
+        MqttConnectionSettings settings = widget->getMqttConnectionSettings();
+
+        appSettings.setArrayIndex(idx);
+        appSettings.setValue("hostname",    settings.hostname.c_str());
+        appSettings.setValue("port",        settings.port);
+        appSettings.setValue("username",    settings.username.c_str());
+        appSettings.setValue("password",    settings.password.c_str());
+        appSettings.setValue("clientId",    settings.clientId.c_str());
+        appSettings.setValue("ssl",         static_cast<int>(settings.sslSetting));
+        appSettings.beginWriteArray("subscriptions");
+        for(int subIdx = 0; subIdx < settings.subscriptions.size(); ++subIdx) {
+            appSettings.setArrayIndex(subIdx);
+            appSettings.setValue("topic",           settings.subscriptions[subIdx].topic.c_str());
+            appSettings.setValue("notification",    settings.subscriptions[subIdx].notification);
+        }
+        appSettings.endArray(); // subscriptions
+    }
+    appSettings.endArray(); // connections
+    appSettings.endGroup(); // mqtt
+}
+
+void MainWindow::restoreSettings()
+{
+    QSettings appSettings(QString("%1/%2.ini").arg(appSavePath, QCoreApplication::applicationName()),
+                          QSettings::IniFormat);
+
+    appSettings.beginGroup("mqtt");
+    int size = appSettings.beginReadArray("connections");
+    for(int idx = 0; idx < size; ++idx) {
+        appSettings.setArrayIndex(idx);
+        MqttConnectionSettings settings;
+        settings.hostname   = appSettings.value("hostname", QString()).toString().toStdString();
+        settings.username   = appSettings.value("username", QString()).toString().toStdString();
+        settings.password   = appSettings.value("password", QString()).toString().toStdString();
+        settings.clientId   = appSettings.value("clientId", QString()).toString().toStdString();
+        settings.port       = appSettings.value("port",     1883).toInt();
+        settings.sslSetting = static_cast<SslSetting>(appSettings.value("ssl", NoSsl).toInt());
+        int subSize = appSettings.beginReadArray("subscriptions");
+        for(int subIdx = 0; subIdx < size; ++subIdx) {
+            Subscription sub;
+            sub.topic           = appSettings.value("topic", QString()).toString().toStdString();
+            sub.notification    = appSettings.value("notification", false).toBool();
+            settings.subscriptions.push_back(sub);
+        }
+        appSettings.endArray(); // subscriptions
+
+        MqttTabWidget *widget = addMqttConnection();
+        widget->setMqttConnectionSettings(settings);
+    }
+
+    appSettings.endArray(); // connections
+    appSettings.endGroup(); // mqtt
 }
 
 } // namespace mmn

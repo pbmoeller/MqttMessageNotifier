@@ -3,6 +3,7 @@
 
 // STL
 #include <string>
+#include <vector>
 
 namespace mmn {
 
@@ -13,6 +14,12 @@ enum SslSetting
     ExtendedSsl = 2,
 };
 
+struct Subscription
+{
+    std::string topic;
+    bool notification;
+};
+
 struct MqttConnectionSettings
 {
     int port{0};
@@ -20,7 +27,8 @@ struct MqttConnectionSettings
     std::string username;
     std::string password;
     std::string clientId;
-    SslSetting sslSetting;
+    SslSetting sslSetting{NoSsl};
+    std::vector<Subscription> subscriptions;
 };
 
 } // namespace mmn

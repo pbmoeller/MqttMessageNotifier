@@ -32,6 +32,7 @@ public:
 public:
     std::string getServerUri() const;
 
+    bool isConnected() const;
     void connect(const MqttConnectionSettings &settings);
     void disconnect();
     void addSubscription(const std::string &topic, int qos);

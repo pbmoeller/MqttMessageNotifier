@@ -1,7 +1,6 @@
 // MqttMessageNotifier
 #include "mqtt_tab_widget.hpp"
 #include "mqtt/mqtt_connection.hpp"
-#include "mqtt/mqtt_connection_settings.hpp"
 
 // Qt
 #include <QCheckBox>
@@ -35,7 +34,7 @@ MqttTabWidget::~MqttTabWidget()
     disconnect();
 }
 
-void MqttTabWidget::connect()
+MqttConnectionSettings MqttTabWidget::getMqttConnectionSettings() const
 {
     MqttConnectionSettings settings;
     settings.hostname   = m_hostnameEdit->text().toStdString();
@@ -45,7 +44,38 @@ void MqttTabWidget::connect()
     settings.port       = m_portEdit->text().toInt();
     settings.sslSetting = static_cast<SslSetting>(m_sslGroup->checkedId());
 
-    m_mqttConnection->connect(settings);
+    QTreeWidgetItemIterator it(m_subscriptionList);
+    while(*it) {
+        Subscription sub;
+        sub.topic           = (*it)->text(0).toStdString();
+        sub.notification    = ((*it)->text(1).toStdString() == "true");
+        settings.subscriptions.push_back(sub);
+        ++it;
+    }
+
+    return settings;
+}
+
+void MqttTabWidget::setMqttConnectionSettings(const MqttConnectionSettings &settings)
+{
+    if(m_mqttConnection != nullptr && m_mqttConnection->isConnected()) {
+        m_mqttConnection->disconnect();
+    }
+
+    m_hostnameEdit->setText(QString::fromStdString(settings.hostname));
+    m_usernameEdit->setText(QString::fromStdString(settings.username));
+    m_passwordEdit->setText(QString::fromStdString(settings.password));
+    m_clientIdEdit->setText(QString::fromStdString(settings.clientId));
+    m_portEdit->setText(QString::number(settings.port));
+    QAbstractButton *btn = m_sslGroup->button(settings.sslSetting);
+    if(btn) {
+        btn->setChecked(true);
+    }
+}
+
+void MqttTabWidget::connect()
+{
+    m_mqttConnection->connect(getMqttConnectionSettings());
 }
 
 void MqttTabWidget::disconnect()
@@ -129,6 +159,7 @@ void MqttTabWidget::createContent()
     m_disconnectButton  = new QPushButton(tr("Disconnect"));
     QObject::connect(m_disconnectButton, &QPushButton::clicked, this, &MqttTabWidget::disconnect);
     m_sslNoRadio        = new QRadioButton(tr("No SSL"));
+    m_sslNoRadio->setChecked(true);
     m_sslEasyRadio      = new QRadioButton(tr("Simple SSL"));
     m_sslExtendedRadio  = new QRadioButton(tr("Extended SSL settings (currently not supported)"));
     m_sslExtendedRadio->setEnabled(false);

@@ -14,6 +14,8 @@ QT_END_NAMESPACE
 
 namespace mmn {
 
+class MqttTabWidget;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -35,13 +37,18 @@ private:
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    void addMqttConnection();
+    MqttTabWidget* addMqttConnection();
 
 public slots:
     void connectionChanged(const QString &newName);
     void showMessage(const QString &title, const QString &body);
+    void saveSettings();
+    void restoreSettings();
 
 private:
+    // Settings
+    QString appSavePath;
+
     // Widgets
     QTabWidget          *m_tabWidget;
 
@@ -50,6 +57,7 @@ private:
     QAction             *m_minimizeAction;
     QAction             *m_maximizeAction;
     QAction             *m_restoreAction;
+    QAction             *m_saveAction;
 
     // Mqtt Actions
     QAction             *m_addMqttConnection;
