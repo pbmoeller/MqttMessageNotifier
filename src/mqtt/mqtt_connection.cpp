@@ -100,7 +100,9 @@ void MqttConnection::connect(const MqttConnectionSettings &settings)
 
 void MqttConnection::disconnect()
 {
-    m_mqttClient->disconnect();
+    if(m_mqttClient != nullptr) {
+        m_mqttClient->disconnect();
+    }
     emit connectionStatusChanged(false);
 }
 

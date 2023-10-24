@@ -44,6 +44,8 @@ public slots:
     void showMessage(const QString &title, const QString &body);
     void saveSettings();
     void restoreSettings();
+    void clearAll();
+    void removeConnection();
 
 private:
     // Settings
@@ -60,6 +62,8 @@ private:
     QAction             *m_saveAction;
 
     // Mqtt Actions
+    QAction             *m_removeConnectionAction;
+    QAction             *m_clearAction;
     QAction             *m_addMqttConnection;
 
     // TrayIcon

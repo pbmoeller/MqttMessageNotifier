@@ -31,7 +31,7 @@ MqttTabWidget::MqttTabWidget(QWidget *parent)
 
 MqttTabWidget::~MqttTabWidget()
 {
-    disconnect();
+
 }
 
 MqttConnectionSettings MqttTabWidget::getMqttConnectionSettings() const

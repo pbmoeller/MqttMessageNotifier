@@ -80,6 +80,12 @@ void MainWindow::createActions()
     m_saveAction = new QAction(tr("&Save"), this);
     connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveSettings);
 
+    m_clearAction = new QAction(tr("&Clear All"), this);
+    connect(m_clearAction, &QAction::triggered, this, &MainWindow::clearAll);
+
+    m_removeConnectionAction = new QAction(tr("R&emove Connection"), this);
+    connect(m_removeConnectionAction, &QAction::triggered, this, &MainWindow::removeConnection);
+
     // Mqtt Actions
     m_addMqttConnection = new QAction(tr("Add Connection"));
     connect(m_addMqttConnection, &QAction::triggered, this, &MainWindow::addMqttConnection);
@@ -89,9 +95,12 @@ void MainWindow::createMenuBar()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(m_saveAction);
+    fileMenu->addAction(m_minimizeAction);
     fileMenu->addAction(m_quitAction);
 
     QMenu *mqttMenu = menuBar()->addMenu(tr("&Mqtt"));
+    mqttMenu->addAction(m_clearAction);
+    mqttMenu->addAction(m_removeConnectionAction);
     mqttMenu->addAction(m_addMqttConnection);
 }
 
@@ -211,6 +220,21 @@ void MainWindow::restoreSettings()
 
     appSettings.endArray(); // connections
     appSettings.endGroup(); // mqtt
+}
+
+void MainWindow::clearAll()
+{
+    while(m_tabWidget->count() > 0) {
+        MqttTabWidget* widget = static_cast<MqttTabWidget*>(m_tabWidget->widget(0));
+        m_tabWidget->removeTab(0);
+    }
+}
+
+void MainWindow::removeConnection()
+{
+    int idx = m_tabWidget->currentIndex();
+    MqttTabWidget* widget = static_cast<MqttTabWidget*>(m_tabWidget->widget(idx));
+    m_tabWidget->removeTab(idx);
 }
 
 } // namespace mmn
